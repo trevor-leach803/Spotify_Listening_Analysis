@@ -1,4 +1,4 @@
-# DATA510_Final_Project
+# Test
 Final project for DATA 510 at CofC. Uses Spotify API and Spotipy Python library to pull user top tracks and make visualizations with Plotly and Matplotlib.
 
 Steps for use:
