@@ -1,0 +1,6 @@
+spotify-env
+.env
+spotify_data.db
+.cache
+album_covers
+__pycache__
