@@ -6,9 +6,9 @@ Steps for use:
 2. Create an application with whatever name and description
 3. Click Edit Settings and specify a redirect URI. I did http://127.0.0.1:9090/callback/
 4. Copy the Client ID, Secret Client ID, and Redirect URI into a .env file with the format:
-    SPOTIPY_CLIENT_ID='<client_id>'
-    SPOTIPY_CLIENT_SECRET='<client_secret>'
-    SPOTIPY_REDIRECT_URI='<redirect_uri>'
+    + SPOTIPY_CLIENT_ID='<client_id>'
+    + SPOTIPY_CLIENT_SECRET='<client_secret>'
+    + SPOTIPY_REDIRECT_URI='<redirect_uri>'
 
 Running this script will first check the database for whether the user_id has been queried already. If so, it will ask whether the user wants to replace the old data with the new query data. If so, those lines are deleted from the database and the folder of album covers is removed. If not, the script ends.
 
