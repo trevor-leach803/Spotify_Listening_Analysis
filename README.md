@@ -9,7 +9,7 @@ Steps for use:
     + SPOTIPY_CLIENT_ID='<client_id>'
     + SPOTIPY_CLIENT_SECRET='<client_secret>'
     + SPOTIPY_REDIRECT_URI='<redirect_uri>'
-5. Run data510.py
+5. Run main.py
 
 Running this script will first check the database for whether the user_id has been queried already. If so, it will ask whether the user wants to replace the old data with the new query data. If so, those lines are deleted from the database and the folder of album covers is removed. If not, the script ends.
 
