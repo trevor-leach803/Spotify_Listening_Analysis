@@ -17,6 +17,7 @@ def main():
         data_collector = Data(connection=connection, cursor=cursor)
 
         if not data_collector.check_database():
+            print(data_collector.check_database())
             print("Exiting script...")
             exit()
 
