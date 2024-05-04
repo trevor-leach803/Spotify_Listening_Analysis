@@ -31,10 +31,10 @@ def render(app: Dash) -> html.Div:
         Input(ids.USER_DROPDOWN, 'value')
     )
     def update_scatterplot(users: list[str]) -> html.Div:
-        connection = sqlite3.connect('/Users/trev/Documents/Python/Spotify_Listening_Analysis/spotify_data.db')
-
         if len(users) == 0:
             return html.Div(id=ids.SCATTER_PLOT)
+        
+        connection = sqlite3.connect('/Users/trev/Documents/Python/Spotify_Listening_Analysis/spotify_data.db')
         
         scatterplots = []
         current_row = []

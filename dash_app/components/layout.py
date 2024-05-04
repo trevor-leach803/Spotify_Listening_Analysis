@@ -1,5 +1,5 @@
-from dash import Dash, html
-from . import user_dropdown, sunburst, scatterplot
+from dash import Dash, html, dcc
+from . import genre_artist_sunburst, artist_song_sunburst, user_dropdown, scatterplot, violin, ids
 
 def create_layout(app: Dash) -> html.Div:
     return html.Div(
@@ -13,7 +13,10 @@ def create_layout(app: Dash) -> html.Div:
                     user_dropdown.render(app)
                 ]
             ),
-            sunburst.render(app),
-            scatterplot.render(app)
+            genre_artist_sunburst.render(app),
+            dcc.Store(id=ids.SELECTED_GENRE),
+            artist_song_sunburst.render(app),
+            #scatterplot.render(app),
+            violin.render(app)
         ]
     )

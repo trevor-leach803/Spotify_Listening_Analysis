@@ -1,66 +1,75 @@
-import sqlite3
-import pandas as pd
-
-connection = sqlite3.connect('/Users/trev/Documents/Python/Spotify_Listening_Analysis/spotify_data.db')
-cursor = connection.cursor()
-
-all_users = ['alioopboots','316v4sknrso7vgm6wfhoffra4axa']
-user1 = 'alioopboots'
-print(f'SELECT * FROM ARTISTS WHERE user_id = "{user1}"')
-
-list_of_users = [f'user_id = "{user}"' for user in all_users]
-query_users = " or ".join(list_of_users)
-print(query_users)
-
-if len(all_users) == 1:
-    sun_df = pd.read_sql_query(f'SELECT * FROM ARTISTS WHERE user_id = "{all_users}"', connection)
-else:
-    list_of_users = " or ".join([f'user_id = "{user}"' for user in all_users])
-    # query_users = " or ".join(list_of_users)
-    # print(query_users)
-    sun_df = pd.read_sql_query(f'SELECT * FROM ARTISTS WHERE {list_of_users}', connection)
-
-print(sun_df)
-
-#%%
-import pandas as pd
-import sqlite3
-connection = sqlite3.connect('/Users/trev/Documents/Python/Spotify_Listening_Analysis/spotify_data.db')
-
-users_df = pd.read_sql_query('SELECT USER_ID, USERNAME FROM QUERIES', connection)
-list_of_names = [users_df['username'].iloc[i] for i in range(len(users_df))]
-print(list_of_names)
-#%%
-
-
-from dash import Dash, html, dcc
+# Video:    [All about the Graph Component - Python Dash Plotly](https://youtu.be/G8r2BB3GFVY)
+# Docs:     [dcc.Graph](https://dash.plotly.com/dash-core-components/graph)
+import dash                                     # pip install dash
+from dash import dcc, html, Output, Input
 import plotly.express as px
-import pandas as pd
-import sqlite3
-from . import ids
-from dash.dependencies import Input, Output
 
-def render(app: Dash) -> html.Div:
-    @app.callback(
-        Output(ids.SUNBURST_PLOT, 'children'),
-        Input(ids.USER_DROPDOWN, 'value')
-    )
-    def update_sunburst(users: list[str]) -> html.Div:
-        connection = sqlite3.connect('/Users/trev/Documents/Python/Spotify_Listening_Analysis/spotify_data.db')
-        cursor = connection.cursor()
-        if len(users) == 0:
-            return html.Div(id=ids.SUNBURST_PLOT)
-        elif len(users) == 1:
-            sun_df = pd.read_sql_query(f'SELECT * FROM ARTISTS WHERE user_id = "{users[0]}"', connection)
-        else:
-            list_of_users = " or ".join([f'user_id = "{user}"' for user in users])
-            sun_df = pd.read_sql_query(f'SELECT * FROM ARTISTS WHERE {list_of_users}', connection)
+df = px.data.gapminder()
 
-        # This function generates a sunburst plot for a user's top artists and their popularity
-        labels = {'top_track_num':'Number of Top Tracks', 'popularity':'Artist Popularity', 'labels':'Artist', 'parent':'Genre'}
-        title = f"Genres for alioopboots' Top Artists"
-        sun_fig = px.sunburst(sun_df, path=['genres','artist_name'],values='top_track_num',color='popularity',color_continuous_scale='RdBu',color_continuous_midpoint=50,labels=labels,title=title)
-    
-        return html.Div(dcc.Graph(figure=sun_fig), id=ids.SUNBURST_PLOT)
-    
-    return html.Div(id=ids.SUNBURST_PLOT)
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+
+app.layout = html.Div([
+    dcc.Dropdown(id='dpdn2', value=['Germany','Brazil'], multi=True,
+                 options=[{'label': x, 'value': x} for x in
+                          df.country.unique()]),
+    html.Div([
+        dcc.Graph(id='pie-graph', figure={}, className='six columns'),
+        dcc.Graph(id='my-graph', figure={}, clickData=None, hoverData=None, # I assigned None for tutorial purposes. By defualt, these are None, unless you specify otherwise.
+                  config={
+                      'staticPlot': False,     # True, False
+                      'scrollZoom': True,      # True, False
+                      'doubleClick': 'reset',  # 'reset', 'autosize' or 'reset+autosize', False
+                      'showTips': False,       # True, False
+                      'displayModeBar': True,  # True, False, 'hover'
+                      'watermark': True,
+                      # 'modeBarButtonsToRemove': ['pan2d','select2d'],
+                        },
+                  className='six columns'
+                  )
+    ])
+])
+
+
+@app.callback(
+    Output(component_id='my-graph', component_property='figure'),
+    Input(component_id='dpdn2', component_property='value'),
+)
+def update_graph(country_chosen):
+    dff = df[df.country.isin(country_chosen)]
+    fig = px.line(data_frame=dff, x='year', y='gdpPercap', color='country',
+                  custom_data=['country', 'continent', 'lifeExp', 'pop'])
+    fig.update_traces(mode='lines+markers')
+    return fig
+
+
+# Dash version 1.16.0 or higher
+@app.callback(
+    Output(component_id='pie-graph', component_property='figure'),
+    Input(component_id='my-graph', component_property='clickData'),
+    Input(component_id='my-graph', component_property='hoverData'),
+    Input(component_id='my-graph', component_property='selectedData'),
+    Input(component_id='dpdn2', component_property='value')
+)
+def update_side_graph(hov_data, clk_data, slct_data, country_chosen):
+    if hov_data is None:
+        dff2 = df[df.country.isin(country_chosen)]
+        dff2 = dff2[dff2.year == 1952]
+        print(dff2)
+        fig2 = px.pie(data_frame=dff2, values='pop', names='country',
+                      title='Population for 1952')
+        return fig2
+    else:
+        print(f'hover data: {hov_data}')
+        # print(hov_data['points'][0]['customdata'][0])
+        # print(f'click data: {clk_data}')
+        # print(f'selected data: {slct_data}')
+        dff2 = df[df.country.isin(country_chosen)]
+        hov_year = hov_data['points'][0]['x']
+        dff2 = dff2[dff2.year == hov_year]
+        fig2 = px.pie(data_frame=dff2, values='pop', names='country', title=f'Population for: {hov_year}')
+        return fig2
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)

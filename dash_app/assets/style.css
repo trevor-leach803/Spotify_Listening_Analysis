@@ -2,6 +2,10 @@ hr {
     border-top: 2px solid gray;
 }
 
+.app-container {
+    width: 100%;
+}
+
 .dropdown-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -54,7 +58,7 @@ hr {
     padding-bottom: 20px;
 }
 
-@media(max-width: 800px) {
+@media (max-width: 800px) {
     .dropdown-container {
         grid-template-columns: 1fr;
     }

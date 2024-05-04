@@ -1,4 +1,7 @@
 USER_DROPDOWN = 'user-dropdown'
 USER_SELECT_ALL = 'user-select-all'
-SUNBURST_PLOT = 'sunburst-plot'
+GENRE_ARTIST_SUNBURST_PLOT = 'genre-artist-sunburst-plot'
+ARTIST_SONG_SUNBURST_PLOT = 'artist-song-sunburst-plot'
 SCATTER_PLOT = 'scatter-plot'
+VIOLIN_PLOT = 'violin-plot'
+SELECTED_GENRE = 'selected-genre'
